@@ -5,6 +5,7 @@ from homeassistant.core import HomeAssistant
 
 from .const import PLATFORMS
 from .coordinator import CupsCoordinator
+from .panel import async_register_panel, async_remove_panel
 from .power import CupsPowerManager
 
 
@@ -29,6 +30,8 @@ async def async_setup_entry(
 
     manager.start()
 
+    await async_register_panel(hass, entry)
+
     return True
 
 
@@ -48,5 +51,7 @@ async def async_unload_entry(
 
         if manager is not None:
             await manager.stop()
+
+        async_remove_panel(hass, entry)
 
     return unloaded

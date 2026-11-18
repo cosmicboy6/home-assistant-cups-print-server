@@ -87,6 +87,31 @@ Starting with `v0.1.0-beta.7`, the integration also supports an optional Home As
 - No cloud connection required
 - Uses Home Assistant's existing switch entities for power control
 
+### 🖥️ Sidebar panel
+
+- A dedicated **CUPS Print Server** page in the Home Assistant sidebar
+- One card per CUPS printer queue
+- Live status and print-job sensors on every card
+- Power-management controls (power switch, automatic on/off, shutdown delay) directly on the page
+- Opens the printer's CUPS web page in a new tab
+- Uses the Home Assistant entity and device registry, so no extra token is required
+
+---
+
+## 🖥️ Sidebar panel
+
+Starting with this version, the integration registers its own page in the Home Assistant sidebar.
+
+Open **CUPS Print Server** in the sidebar to see:
+
+- one card per discovered CUPS printer queue,
+- the live **status and print-job sensors** (status, queued jobs, current job, job ID, job status, printed pages, last job, last print time, reachable), and
+- the **power-management controls** (printer power, automatic power-on, automatic power-off and the shutdown delay), when a smart plug is configured.
+
+Each card also links to the printer's CUPS web page (`http://<cups-host>:631/printers/<queue>`).
+
+The page is available to every Home Assistant user and does not need any additional token, because it reads the Home Assistant entity and device registry directly.
+
 ---
 
 ## 🖨️ Entities
