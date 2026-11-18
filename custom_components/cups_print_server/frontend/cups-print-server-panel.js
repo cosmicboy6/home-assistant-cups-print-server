@@ -164,11 +164,11 @@ class CupsPrintServerPanel extends HTMLElement {
     const deviceIds = this._deviceIds();
 
     for (const [entityId, entry] of Object.entries(hass.entities)) {
-      if (!entry) continue;
+      if (!entry || !entry.device_id) continue;
       const byPlatform = entry.platform === DOMAIN;
-      const byDevice = entry.device_id && deviceIds.has(entry.device_id);
+      const byDevice = deviceIds.has(entry.device_id);
       if (!byPlatform && !byDevice) continue;
-      const deviceId = entry.device_id || "__none__";
+      const deviceId = entry.device_id;
       if (!printers.has(deviceId)) {
         printers.set(deviceId, { deviceId, entities: [] });
       }

@@ -11,6 +11,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -80,6 +81,18 @@ class CupsPrinterBinarySensor(
         return self.coordinator.data.get(
             "queues", {}
         ).get(self.queue, {})
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Attach the binary sensor to the printer device."""
+        return DeviceInfo(
+            identifiers={
+                (
+                    DOMAIN,
+                    f"{self.coordinator.entry.entry_id}_{self.queue}",
+                )
+            }
+        )
 
     @property
     def available(self) -> bool:

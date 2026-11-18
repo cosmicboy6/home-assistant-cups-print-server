@@ -130,6 +130,7 @@ For every discovered CUPS printer queue, the integration creates a Home Assistan
 | Pages completed | Number of pages completed for the current job |
 | Last job | Most recent print job |
 | Last print time | Timestamp of the most recent print job |
+| Printer reachable | Binary sensor: whether the physical printer responds |
 
 Depending on the information supplied by CUPS and the print client, additional job information is available as entity attributes.
 
