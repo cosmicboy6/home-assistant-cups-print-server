@@ -1,5 +1,21 @@
 # CUPS Print Server for Home Assistant
 
+> ### 🍴 Forked from [`xsasx/home-assistant-cups-print-server`](https://github.com/xsasx/home-assistant-cups-print-server)
+>
+> This repository is a **fork** of the original **CUPS Print Server** integration
+> by **[xsasx](https://github.com/xsasx)**. The IPP client, the config flow, the
+> sensors, the translations and the smart-plug power management are xsasx's work —
+> full credit for the original integration goes to them. The project is licensed
+> under the MIT License (see [`LICENSE`](LICENSE)), and the original copyright
+> notice is kept.
+>
+> **What this fork adds:** a **Home Assistant UI page** — a *CUPS Print Server*
+> entry in the sidebar with one card per printer queue (sensors + power
+> controls). It is part of the integration, so nothing extra has to be installed.
+> Maintained by **[cosmicboy6](https://github.com/cosmicboy6)**.
+>
+> The original upstream project: <https://github.com/xsasx/home-assistant-cups-print-server>
+
 [![HACS Validation](https://github.com/xsasx/home-assistant-cups-print-server/actions/workflows/hacs.yml/badge.svg)](https://github.com/xsasx/home-assistant-cups-print-server/actions/workflows/hacs.yml)
 [![hassfest](https://github.com/xsasx/home-assistant-cups-print-server/actions/workflows/hassfest.yml/badge.svg)](https://github.com/xsasx/home-assistant-cups-print-server/actions/workflows/hassfest.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/xsasx/home-assistant-cups-print-server?include_prereleases)](https://github.com/xsasx/home-assistant-cups-print-server/releases)
@@ -13,9 +29,10 @@ Everything runs locally. No cloud service, SSH access or shell commands from Hom
 
 ---
 
-## ☕ Support the project
+## ☕ Support the original project
 
-If this integration is useful to you and you'd like to support its development, you can buy me a coffee.
+This integration was created by **xsasx**. If it is useful to you and you'd like
+to support its development, you can buy the original author a coffee.
 
 [![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/xsas1337)
 
@@ -98,19 +115,59 @@ Starting with `v0.1.0-beta.7`, the integration also supports an optional Home As
 
 ---
 
-## 🖥️ Sidebar panel
+## 🖥️ The Home Assistant UI (sidebar page)
 
-Starting with this version, the integration registers its own page in the Home Assistant sidebar.
+This fork ships a small frontend page that the integration registers as its own
+entry in the Home Assistant sidebar. **It is part of the integration** — you do
+not install it separately, you do not need HACS for it, and no YAML is involved.
 
-Open **CUPS Print Server** in the sidebar to see:
+### What it shows
 
-- one card per discovered CUPS printer queue,
-- the live **status and print-job sensors** (status, queued jobs, current job, job ID, job status, printed pages, last job, last print time, reachable), and
-- the **power-management controls** (printer power, automatic power-on, automatic power-off and the shutdown delay), when a smart plug is configured.
+Open **CUPS Print Server** in the sidebar to get one card per CUPS printer queue:
 
-Each card also links to the printer's CUPS web page (`http://<cups-host>:631/printers/<queue>`).
+- the **status and print-job sensors** — status, queued jobs, current job, job
+  ID, job status, printed pages, last job, last print time and printer
+  reachable;
+- the **power-management controls** — printer power, automatic power-on,
+  automatic power-off and the shutdown delay (plus the countdown sensor), when a
+  smart plug is configured;
+- a link to the printer's CUPS web page
+  (`http://<cups-host>:631/printers/<queue>`).
 
-The page is available to every Home Assistant user and does not need any additional token, because it reads the Home Assistant entity and device registry directly.
+### How to enable it
+
+The page is registered automatically as soon as the integration has at least one
+config entry:
+
+1. Install the integration — see
+   [Installation with HACS](#installation-with-hacs) or
+   [Manual installation](#manual-installation).
+2. Restart Home Assistant.
+3. Add the integration: **Settings → Devices & services → Add integration →
+   CUPS Print Server**, then enter your CUPS host and IPP port (`631`).
+4. Hard-refresh the frontend (`Ctrl`+`F5`, or `Cmd`+`Shift`+`R` on macOS).
+   **CUPS Print Server** now appears in the sidebar.
+
+No `panel_custom` entry and no additional token are required: the page reads the
+Home Assistant entity and device registry directly, and it is available to every
+Home Assistant user (registered with `require_admin=False`).
+
+### Removing it
+
+Remove the integration (or its last config entry) and the sidebar entry
+disappears with it — the panel and its static path are unregistered on unload.
+
+### Troubleshooting
+
+- **No sidebar entry:** the page is registered per config entry — make sure the
+  integration has at least one entry, then hard-refresh the browser.
+- **Empty page:** the page lists only devices created by the
+  `cups_print_server` integration; check that at least one CUPS queue was
+  discovered.
+- **`404` on the panel module after the first install:** the static path is
+  registered during startup; restart Home Assistant once.
+- The integration requires Home Assistant **2026.6.0** or newer (see
+  [`hacs.json`](hacs.json)).
 
 ---
 
@@ -264,16 +321,24 @@ For initial testing, keep automatic power-off disabled until the printer's start
 
 ## 📦 Installation with HACS
 
+> HACS is optional — the integration can also be
+> [installed manually](#manual-installation). The sidebar page works either way.
+
 ### Custom repository
 
-Until the integration is available through the default HACS repository list:
+The integration is not in the default HACS repository list, so add it as a
+custom repository:
 
 1. Open **HACS** in Home Assistant.
 2. Open the menu in the upper-right corner.
 3. Select **Custom repositories**.
-4. Add:
+4. Add this fork:
 
-   `https://github.com/xsasx/home-assistant-cups-print-server`
+   `https://github.com/cosmicboy6/home-assistant-cups-print-server`
+
+   (or the original upstream repository,
+   `https://github.com/xsasx/home-assistant-cups-print-server`, if you prefer the
+   upstream version without the sidebar page)
 
 5. Select **Integration** as the repository type.
 6. Install **CUPS Print Server**.
@@ -305,17 +370,34 @@ Printer queues are discovered automatically.
 
 Existing printer monitoring entities should remain available.
 
+### Switching from the upstream integration
+
+If you already use the upstream `xsasx` version, you can move to this fork
+without losing your setup:
+
+1. In HACS, open the **Custom repositories** dialog and replace the upstream
+   repository URL with
+   `https://github.com/cosmicboy6/home-assistant-cups-print-server`.
+2. Download the fork (it replaces the files in place).
+3. Restart Home Assistant.
+
+Your existing config entry, devices and entities are kept — only the integration
+files change, and the fork adds the sidebar page on top.
+
 ---
 
 ## 🛠️ Manual installation
 
-Copy:
+Copy the whole folder:
 
 `custom_components/cups_print_server`
 
 to:
 
 `/config/custom_components/cups_print_server`
+
+Copy it **complete** — the sidebar page needs `panel.py` and the `frontend/`
+folder as well.
 
 Your directory should look similar to this:
 
@@ -332,6 +414,7 @@ Your directory should look similar to this:
         ├── ipp.py
         ├── manifest.json
         ├── number.py
+        ├── panel.py
         ├── power.py
         ├── power_sensor.py
         ├── sensor.py
@@ -339,6 +422,8 @@ Your directory should look similar to this:
         ├── strings.json
         ├── brand/
         │   └── icon.png
+        ├── frontend/
+        │   └── cups-print-server-panel.js
         └── translations/
             ├── de.json
             └── en.json
@@ -347,6 +432,9 @@ Your directory should look similar to this:
 Restart Home Assistant and add the integration through:
 
 **Settings → Devices & services → Add integration → CUPS Print Server**
+
+The **CUPS Print Server** sidebar page is then registered automatically (see
+[The Home Assistant UI](#the-home-assistant-ui-sidebar-page)).
 
 ---
 
@@ -436,7 +524,12 @@ Suggestions and pull requests are welcome.
 
 Found a bug or have an idea?
 
-Please use the [GitHub issue tracker](https://github.com/xsasx/home-assistant-cups-print-server/issues).
+For problems with this fork (including the sidebar page), please use the
+[fork's issue tracker](https://github.com/cosmicboy6/home-assistant-cups-print-server/issues).
+
+For problems with the underlying integration that also occur upstream, the
+[original issue tracker](https://github.com/xsasx/home-assistant-cups-print-server/issues)
+is the right place.
 
 ---
 
@@ -448,6 +541,36 @@ If you're testing the integration with another CUPS setup, printer model or smar
 
 ---
 
+## 🙏 Credits
+
+- **Original project:** [`xsasx/home-assistant-cups-print-server`](https://github.com/xsasx/home-assistant-cups-print-server)
+  by **[xsasx](https://github.com/xsasx)**. This repository is a fork of it — the
+  IPP client, config flow, sensors, translations and smart-plug power management
+  are their work. If the integration is useful to you, please consider
+  [supporting xsasx](https://ko-fi.com/xsas1337).
+- **This fork:** [`cosmicboy6/home-assistant-cups-print-server`](https://github.com/cosmicboy6/home-assistant-cups-print-server)
+  by **[cosmicboy6](https://github.com/cosmicboy6)** — adds the Home Assistant
+  sidebar page (one card per printer queue with sensors and power controls).
+- The fork's sidebar page was built with **[OpenCode](https://opencode.ai)**,
+  running in the [`sprisa/opencode`](https://hub.docker.com/r/sprisa/opencode)
+  Docker image (source:
+  [`sprisa/opencode-server`](https://github.com/sprisa/opencode-server)):
+
+  ```sh
+  docker pull sprisa/opencode:latest
+  ```
+
+- Built by **Big Pickle GO** 🥒
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+It is a fork of [`xsasx/home-assistant-cups-print-server`](https://github.com/xsasx/home-assistant-cups-print-server)
+and keeps the original copyright notice:
+
+```text
+Copyright (c) 2026 xsasx
+```
